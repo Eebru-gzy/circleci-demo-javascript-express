@@ -13,15 +13,15 @@ jobs:
           name: "Output command to a file"
           command: echo "Hello World" > output.txt
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: /tmp/
           paths:
-            - ./output.txt
+            - output.txt
   print_output_file:
     docker:
       - image: cimg/base:stable
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: /tmp/
       - run:
           name: "Print from workspace"
           command: cat ./output.txt
@@ -32,3 +32,4 @@ workflows:
   say-hello-workflow:
     jobs:
       - save_hello_world_output
+      - print_output_file
