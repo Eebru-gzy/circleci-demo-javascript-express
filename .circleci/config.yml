@@ -1,22 +1,35 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
+commands:
+  print_pipeline_id:
+    description: "A very simple command to print workflow ID"
+    parameters:
+      to:
+        type: string
+        default: echo $CIRCLE_WORKFLOW_ID
+    steps:
+      - run: echo << parameters.to >>
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  save_hello_world_output:
+  print_command:
+    docker:
+    - image: cimg/base:stable
+    steps:
+      - print_pipeline_id
+  save_to_workspace:
     docker:
       - image: cimg/base:stable
     steps:
-      - run:
-          name: "Output command to a file"
-          command: echo "Hello World!!!!!!!!" > ~/output.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - output.txt
-  print_output_file:
+      - run: 
+          name: "Save to workspace"
+          command: echo "Hello world!!!!!!!!!!!" > output.txt
+  save_hello_world_output:
     docker:
       - image: cimg/base:stable
     steps:
@@ -26,13 +39,17 @@ jobs:
           name: "Print from workspace"
           command: cat ~/output.txt
 
+      
+  
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
-      - save_hello_world_output
-      - print_output_file:
+      - print_command
+      - save_to_workspace
+      - save_hello_world_output:
           requires:
-            - save_hello_world_output
+            - save_to_workspace
 
