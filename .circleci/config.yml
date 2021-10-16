@@ -22,14 +22,14 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
+      - run:
+          name: "Output command to a file"
+          command: echo "Hello World!!!!!!!!" > ~/output.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - output.txt
-      - run: 
-          name: "Save to workspace"
-          command: echo "Hello world!!!!!!!!!!!" > output.txt
-  save_hello_world_output:
+  print_output_file:
     docker:
       - image: cimg/base:stable
     steps:
@@ -49,7 +49,7 @@ workflows:
     jobs:
       - print_command
       - save_to_workspace
-      - save_hello_world_output:
+      - print_output_file:
           requires:
             - save_to_workspace
 
