@@ -38,7 +38,15 @@ jobs:
       - run:
           name: "Print from workspace"
           command: cat ~/output.txt
-
+  failed_job:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: return 1
+      - run: 
+          name: "Testing Failed job"
+          command: echo "Testing Error step"
+          when: on_fail
       
   
 
@@ -52,4 +60,5 @@ workflows:
       - print_output_file:
           requires:
             - save_to_workspace
+      - failed_job
 
